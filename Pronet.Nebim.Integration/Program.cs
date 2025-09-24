@@ -151,6 +151,31 @@ app.MapPost("/api/test/pronet", async (IPronetApiService pronetService, ILogger<
     }
 });
 
+app.MapPost("/api/test/nebim", async (INebimApiService nebimService, ILogger<Program> logger) =>
+{
+    logger.LogInformation("Nebim bağlantı testi başlatıldı.");
+    try
+    {
+        var sessionId = await nebimService.ConnectAsync();
+
+        // ConnectAsync metodu, başarılı olamazsa Guid.Empty döner.
+        if (sessionId != Guid.Empty)
+        {
+            logger.LogInformation("Nebim bağlantı testi başarılı.");
+            return Results.Ok(new { success = true, message = "Nebim bağlantısı başarılı!" });
+        }
+        else
+        {
+            logger.LogWarning("Nebim bağlantı testi başarısız.");
+            return Results.Json(new { success = false, message = "Bağlantı başarısız! Bilgileri kontrol edin." }, statusCode: 400);
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Nebim bağlantı testi sırasında kritik bir hata oluştu.");
+        return Results.Json(new { success = false, message = "Sunucuda bir hata oluştu." }, statusCode: 500);
+    }
+});
 // --- Uygulamayı Başlatma ---
 // Bu komut hem web sunucusunu başlatır hem de AddHostedService ile eklenen Worker'ları çalıştırır.
 await app.RunAsync();

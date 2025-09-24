@@ -393,7 +393,7 @@ function renderDeviceList() {
         console.error('deviceList elementi bulunamadı');
         return;
     }
-
+console.log(devices);
     tbody.innerHTML = devices.map(device => {
         // TimeOnly formatını düzenle (API'den "HH:MM:SS" geliyorsa sadece "HH:MM" al)
         const formatTime = (timeString) => {
@@ -405,21 +405,21 @@ function renderDeviceList() {
         return `
         <tr>
             <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${device.IsActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                    <i class="fas ${device.IsActive ? 'fa-check-circle' : 'fa-times-circle'} mr-1"></i>
-                    ${device.IsActive ? 'Aktif' : 'Pasif'}
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${device.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    <i class="fas ${device.isActive ? 'fa-check-circle' : 'fa-times-circle'} mr-1"></i>
+                    ${device.isActive ? 'Aktif' : 'Pasif'}
                 </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.NebimOfficeCode}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.NebimStoreCode}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.PronetStoreCode || '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${device.MacAddress || '-'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(device.OpeningTime)} - ${formatTime(device.ClosingTime)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.nebimOfficeCode}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.nebimStoreCode}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${device.pronetStoreCode || '-'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${device.macAddress || '-'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(device.openingTime)} - ${formatTime(device.closingTime)}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                <button class="text-blue-600 hover:text-blue-900" onclick="editDevice(${device.Id})">
+                <button class="text-blue-600 hover:text-blue-900" onclick="editDevice(${device.id})">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="text-red-600 hover:text-red-900" onclick="deleteDevice(${device.Id})">
+                <button class="text-red-600 hover:text-red-900" onclick="deleteDevice(${device.id})">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
