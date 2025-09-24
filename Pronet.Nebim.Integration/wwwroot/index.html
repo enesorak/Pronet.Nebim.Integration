@@ -1,0 +1,508 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pronet-Nebim Entegrasyon Sistemi</title>
+    <script>
+        // Tailwind CDN uyarısını gizle (sadece development için)
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            if (args[0]?.includes?.('should not be used in production')) return;
+            originalWarn.apply(console, args);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Navigation -->
+<nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <h1 class="text-xl font-semibold text-gray-900">Pronet-Nebim Entegrasyon Sistemi</h1>
+            </div>
+            <div class="flex space-x-8">
+                <a href="#dashboard" onclick="event.preventDefault(); showDashboard()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    Dashboard
+                </a>
+                <a href="#devices" onclick="event.preventDefault(); showDeviceManagement()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fas fa-mobile-alt mr-2"></i>
+                    Device Management
+                </a>
+                <a href="#settings" onclick="event.preventDefault(); showSettings()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fas fa-cog mr-2"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Dashboard Section -->
+<div id="dashboardSection" class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 hidden">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
+        <p class="text-gray-600">Pronet-Nebim entegrasyon durumu ve son güncellemeler.</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-blue-100 rounded-md p-3">
+                            <i class="fas fa-sync text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Son Güncelleme</dt>
+                            <dd class="text-lg font-medium text-gray-900" id="lastUpdateTime">15:30 - Bugün</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Pronet Test Butonu -->
+                <div class="pt-4 border-t border-gray-200">
+                    <button type="button" id="testPronetBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-vial mr-2"></i>
+                        Pronet Bağlantısını Test Et
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-green-100 rounded-md p-3">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Aktif Mağazalar</dt>
+                            <dd class="text-lg font-medium text-gray-900" id="activeStores">3</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Nebim Test Butonu -->
+                <div class="pt-4 border-t border-gray-200">
+                    <button type="button" id="testNebimBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-vial mr-2"></i>
+                        Nebim Bağlantısını Test Et
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-purple-100 rounded-md p-3">
+                            <i class="fas fa-users text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Bugünkü Toplam</dt>
+                            <dd class="text-lg font-medium text-gray-900" id="todayTotal">1,247 kişi</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Son Güncellemeler -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-900">Son Güncellemeler</h3>
+                <button onclick="refreshAllStores()" class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-sync mr-1"></i>
+                    Tümünü Güncelle
+                </button>
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+                <div id="updateLogsList">
+                    <!-- Updates will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarih Aralığı Güncelle -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Tarih Aralığı Güncelleme</h3>
+            </div>
+            <div class="p-6">
+                <form id="dateRangeForm" class="space-y-4">
+                    <div>
+                        <label for="storeSelect" class="block text-sm font-medium text-gray-700 mb-2">
+                            Mağaza Seçin
+                        </label>
+                        <select id="storeSelect" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Mağaza seçin...</option>
+                            <option value="M001">M001 - İstanbul Merkez</option>
+                            <option value="M002">M002 - Ankara Şubesi</option>
+                            <option value="M003">M003 - İzmir Mağazası</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">
+                                Başlangıç Tarihi
+                            </label>
+                            <input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">
+                                Bitiş Tarihi
+                            </label>
+                            <input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Tarih Aralığını Güncelle
+                    </button>
+                </form>
+
+                <!-- Progress Bar (hidden by default) -->
+                <div id="updateProgress" class="hidden mt-4">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Güncelleniyor...</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Device Management Section -->
+<div id="deviceManagementSection" class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 hidden">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Cihaz Yönetimi</h2>
+            <p class="text-gray-600">Pronet cihazlarını yönetin ve Nebim mağaza kodları ile eşleştirin.</p>
+        </div>
+        <button onclick="openAddDeviceModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+            <i class="fas fa-plus mr-2"></i>
+            Cihaz Ekle
+        </button>
+    </div>
+
+    <!-- Device List -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Kayıtlı Cihazlar</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nebim Ofis Kodu</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nebim Mağaza Kodu</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pronet Mağaza Kodu</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MAC Adresi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Çalışma Saatleri</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="deviceList">
+                <!-- Devices will be rendered here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Section -->
+<div id="settingsSection" class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 hidden">
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Entegrasyon Ayarları</h2>
+        <p class="text-gray-600">Pronet kişi sayım sistemi ve Nebim ERP entegrasyonu için gerekli ayarları yapın.</p>
+    </div>
+
+    <div class="space-y-8">
+        <!-- Pronet Ayarları -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Pronet Kişi Sayım Sistemi</h3>
+                </div>
+            </div>
+            <div class="px-6 py-6">
+                <div class="space-y-6">
+                    <!-- API Adresi - Tam genişlik -->
+                    <div>
+                        <label for="pronet-api" class="block text-sm font-medium text-gray-700 mb-2">
+                            API Adresi
+                        </label>
+                        <input type="url" id="pronet-api" name="pronet-api"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                               placeholder="https://api.pronet.com/">
+                    </div>
+
+                    <!-- Diğer alanlar - 3 sütun -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="pronet-username" class="block text-sm font-medium text-gray-700 mb-2">
+                                Kullanıcı Adı
+                            </label>
+                            <input type="text" id="pronet-username" name="pronet-username"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                   placeholder="Kullanıcı adınız">
+                        </div>
+                        <div>
+                            <label for="pronet-password" class="block text-sm font-medium text-gray-700 mb-2">
+                                Şifre
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="pronet-password" name="pronet-password"
+                                       class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                       placeholder="••••••••">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('pronet-password')">
+                                    <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="pronet-mode" class="block text-sm font-medium text-gray-700 mb-2">
+                                Veri Çekme Modu
+                            </label>
+                            <select id="pronet-mode" name="pronet-mode"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                <option value="0">Saatlik (0)</option>
+                                <option value="1">Günlük (1)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nebim Ayarları -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-green-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-database text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Nebim ERP Sistemi</h3>
+                </div>
+            </div>
+            <div class="px-6 py-6">
+                <div class="space-y-6">
+                    <!-- API Adresi - Tam genişlik -->
+                    <div>
+                        <label for="nebim-api" class="block text-sm font-medium text-gray-700 mb-2">
+                            API Adresi
+                        </label>
+                        <input type="url" id="nebim-api" name="nebim-api"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                               placeholder="https://api.nebim.com/">
+                    </div>
+
+                    <!-- Kullanıcı bilgileri - 2 sütun -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nebim-username" class="block text-sm font-medium text-gray-700 mb-2">
+                                Kullanıcı Adı
+                            </label>
+                            <input type="text" id="nebim-username" name="nebim-username"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                   placeholder="Kullanıcı adınız">
+                        </div>
+                        <div>
+                            <label for="nebim-password" class="block text-sm font-medium text-gray-700 mb-2">
+                                Şifre
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="nebim-password" name="nebim-password"
+                                       class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                       placeholder="••••••••">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('nebim-password')">
+                                    <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Senkronizasyon Ayarları -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-purple-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-sync-alt text-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Senkronizasyon Ayarları</h3>
+                </div>
+            </div>
+            <div class="px-6 py-6">
+                <div class="max-w-md">
+                    <label for="sync-frequency" class="block text-sm font-medium text-gray-700 mb-2">
+                        Veri Güncelleme Sıklığı
+                    </label>
+                    <select id="sync-frequency" name="sync-frequency"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        <option value="5">Her 5 dakikada</option>
+                        <option value="15">Her 15 dakikada</option>
+                        <option value="30">Her 30 dakikada</option>
+                        <option value="60" selected>Her saatte</option>
+                        <option value="120">Her 2 saatte</option>
+                        <option value="240">Her 4 saatte</option>
+                        <option value="1440">Günde bir kez</option>
+                    </select>
+                    <p class="mt-2 text-xs text-gray-500">
+                        Pronet'ten veri çekme ve Nebim'e aktarma sıklığını belirler.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <button type="button" id="saveSettingsBtn" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                <i class="fas fa-save mr-2"></i>
+                Ayarları Kaydet
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Device Modal -->
+<div id="deviceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">Yeni Cihaz Ekle</h3>
+            <button onclick="closeDeviceModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form id="deviceForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Active Status -->
+                <div class="md:col-span-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="deviceActive" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <span class="ml-2 text-sm font-medium text-gray-700">Cihaz Aktif</span>
+                    </label>
+                </div>
+
+                <!-- Nebim Office Code -->
+                <div>
+                    <label for="nebimOfficeCode" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nebim Ofis Kodu <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="nebimOfficeCode" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                           placeholder="001">
+                </div>
+
+                <!-- Nebim Store Code -->
+                <div>
+                    <label for="nebimStoreCode" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nebim Mağaza Kodu <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="nebimStoreCode" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                           placeholder="M001">
+                </div>
+
+                <!-- Pronet Store Code -->
+                <div>
+                    <label for="pronetStoreCode" class="block text-sm font-medium text-gray-700 mb-2">
+                        Pronet Mağaza Kodu
+                    </label>
+                    <input type="text" id="pronetStoreCode"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                           placeholder="PRO001">
+                    <p class="mt-1 text-xs text-gray-500">Opsiyonel - Boş bırakılabilir</p>
+                </div>
+
+                <!-- Device MAC Address -->
+                <div>
+                    <label for="deviceMacAddress" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cihaz MAC Adresi
+                    </label>
+                    <input type="text" id="deviceMacAddress" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors font-mono"
+                           placeholder="AA:BB:CC:DD:EE:FF">
+                    <p class="mt-1 text-xs text-gray-500">Format: AA:BB:CC:DD:EE:FF</p>
+                </div>
+
+                <!-- Opening Time -->
+                <div>
+                    <label for="openingTime" class="block text-sm font-medium text-gray-700 mb-2">
+                        Açılış Saati <span class="text-red-500">*</span>
+                    </label>
+                    <input type="time" id="openingTime" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                           value="09:00">
+                </div>
+
+                <!-- Closing Time -->
+                <div>
+                    <label for="closingTime" class="block text-sm font-medium text-gray-700 mb-2">
+                        Kapanış Saati <span class="text-red-500">*</span>
+                    </label>
+                    <input type="time" id="closingTime" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                           value="22:00">
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <button type="button" onclick="closeDeviceModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    İptal
+                </button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

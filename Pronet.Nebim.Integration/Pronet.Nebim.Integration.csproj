@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-ilviLink-44db142a-6fb7-4b4f-b48e-6e874c69f2fc</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\js\dashboard.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\devices.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\settings.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Frontend\" />
+    </ItemGroup>
+
+    <Target Name="Tailwind" BeforeTargets="Build">
+        <Message Text="Compiling Tailwind CSS..." Importance="high" />
+        <Exec Command="npm run build:css" />
+    </Target>
+</Project>
