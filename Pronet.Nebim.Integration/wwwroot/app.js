@@ -47,16 +47,16 @@ async function loadSettings() {
         const settings = await apiRequest('/api/settings');
 
         // Settings formunu doldur
-        if (settings['PronetApiUrl']) document.getElementById('pronet-api').value = settings['PronetApiUrl'];
-        if (settings['PronetUsername']) document.getElementById('pronet-username').value = settings['PronetUsername'];
-        if (settings['PronetPassword']) document.getElementById('pronet-password').value = settings['PronetPassword'];
-        if (settings['PronetMode']) document.getElementById('pronet-mode').value = settings['PronetMode'];
+        if (settings['ApiUrls:Pronet']) document.getElementById('pronet-api').value = settings['ApiUrls:Pronet'];
+        if (settings['Credentials:Pronet:UserName']) document.getElementById('pronet-username').value = settings['Credentials:Pronet:UserName'];
+        if (settings['Credentials:Pronet:Password']) document.getElementById('pronet-password').value = "*****";
+        if (settings['Credentials:Pronet:PronetMode']) document.getElementById('pronet-mode').value = settings['Credentials:Pronet:PronetMode'];
 
-        if (settings['NebimApiUrl']) document.getElementById('nebim-api').value = settings['NebimApiUrl'];
-        if (settings['NebimUsername']) document.getElementById('nebim-username').value = settings['NebimUsername'];
-        if (settings['NebimPassword']) document.getElementById('nebim-password').value = settings['NebimPassword'];
+        if (settings['ApiUrls:Nebim']) document.getElementById('nebim-api').value = settings['ApiUrls:Nebim'];
+        if (settings['Credentials:Nebim:UserName']) document.getElementById('nebim-username').value = settings['Credentials:Nebim:UserName'];
+        if (settings['Credentials:Nebim:Password']) document.getElementById('nebim-password').value = settings['Credentials:Nebim:Password'];
 
-        if (settings['SyncFrequency']) document.getElementById('sync-frequency').value = settings['SyncFrequency'];
+        if (settings['Scheduler:FrequencyMinutes']) document.getElementById('sync-frequency').value = settings['Scheduler:FrequencyMinutes'];
 
         console.log('Ayarlar yüklendi:', settings);
     } catch (error) {
@@ -68,14 +68,14 @@ async function loadSettings() {
 async function saveSettings() {
     try {
         const settings = {
-            'PronetApiUrl': document.getElementById('pronet-api').value,
-            'PronetUsername': document.getElementById('pronet-username').value,
-            'PronetPassword': document.getElementById('pronet-password').value,
-            'PronetMode': document.getElementById('pronet-mode').value,
-            'NebimApiUrl': document.getElementById('nebim-api').value,
-            'NebimUsername': document.getElementById('nebim-username').value,
-            'NebimPassword': document.getElementById('nebim-password').value,
-            'SyncFrequency': document.getElementById('sync-frequency').value
+            'ApiUrls:Pronet': document.getElementById('pronet-api').value,
+            'Credentials:Pronet:UserName': document.getElementById('pronet-username').value,
+            'Credentials:Pronet:Password': document.getElementById('pronet-password').value,
+            'Credentials:Pronet:PronetMode': document.getElementById('pronet-mode').value,
+            'ApiUrls:Nebim': document.getElementById('nebim-api').value,
+            'Credentials:Nebim:UserName': document.getElementById('nebim-username').value,
+            'Credentials:Nebim:Password': document.getElementById('nebim-password').value,
+            'Scheduler:FrequencyMinutes': document.getElementById('sync-frequency').value
         };
 
         console.log('Kaydedilecek ayarlar:', settings); // Debug log
@@ -180,7 +180,7 @@ async function testNebimConnection() {
         console.error('Nebim test hatası:', error);
         throw error;
     }
-}
+ 
 try {
     updateLogs = await apiRequest('/api/dashboard/status');
     console.log('Dashboard durumu yüklendi:', updateLogs);

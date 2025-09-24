@@ -79,13 +79,7 @@
                     </div>
                 </div>
 
-                <!-- Pronet Test Butonu -->
-                <div class="pt-4 border-t border-gray-200">
-                    <button type="button" id="testPronetBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                        <i class="fas fa-vial mr-2"></i>
-                        Pronet Bağlantısını Test Et
-                    </button>
-                </div>
+              
             </div>
         </div>
 
@@ -271,7 +265,7 @@
                         <label for="pronet-api" class="block text-sm font-medium text-gray-700 mb-2">
                             API Adresi
                         </label>
-                        <input type="url" id="pronet-api" name="pronet-api"
+                        <input type="url" id="pronet-api"  data-key="ApiUrls:Pronet"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                placeholder="https://api.pronet.com/">
                     </div>
@@ -282,7 +276,17 @@
                             <label for="pronet-username" class="block text-sm font-medium text-gray-700 mb-2">
                                 Kullanıcı Adı
                             </label>
-                            <input type="text" id="pronet-username" name="pronet-username"
+                            <input type="text" id="pronet-username"
+
+                                   autocomplete="off"
+                                   autocapitalize="none"
+                                   spellcheck="false"
+                                   data-1p-ignore
+                                   data-lpignore="true"
+                                   data-bwignore="true"
+                                   data-protonpass-ignore="true"
+                                   data-key="Credentials:Pronet:UserName"
+                                   name="pronet-username"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                    placeholder="Kullanıcı adınız">
                         </div>
@@ -291,7 +295,15 @@
                                 Şifre
                             </label>
                             <div class="relative">
-                                <input type="password" id="pronet-password" name="pronet-password"
+                                <input type="password"
+
+                                       autocomplete="new-password"
+                                       data-1p-ignore
+                                       data-lpignore="true"
+                                       data-bwignore="true"
+                                       data-protonpass-ignore="true"
+                                       data-key="Credentials:Pronet:Password"
+                                       id="pronet-password" name="pronet-password"
                                        class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                        placeholder="••••••••">
                                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('pronet-password')">
@@ -311,9 +323,19 @@
                         </div>
                     </div>
                 </div>
+                <div class="pt-4 mt-4 border-t border-gray-200 ">
+                    <button type="button" id="testPronetBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-vial mr-2"></i>
+                        Pronet Bağlantısını Test Et
+                    </button>
+                </div>
+            
             </div>
-        </div>
 
+            <!-- Pronet Test Butonu -->
+           
+        </div>
+       
         <!-- Nebim Ayarları -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
@@ -331,7 +353,7 @@
                         <label for="nebim-api" class="block text-sm font-medium text-gray-700 mb-2">
                             API Adresi
                         </label>
-                        <input type="url" id="nebim-api" name="nebim-api"
+                        <input type="url" id="nebim-api" name="nebim-api"  data-key="ApiUrls:Nebim"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                placeholder="https://api.nebim.com/">
                     </div>
@@ -342,7 +364,15 @@
                             <label for="nebim-username" class="block text-sm font-medium text-gray-700 mb-2">
                                 Kullanıcı Adı
                             </label>
-                            <input type="text" id="nebim-username" name="nebim-username"
+                            <input     autocomplete="off"
+                                       autocapitalize="none"
+                                       spellcheck="false"
+                                       data-1p-ignore
+                                       data-lpignore="true"
+                                       data-bwignore="true"
+                                       data-protonpass-ignore="true"
+                                       data-key="Credentials:Nebim:UserName"
+                                       type="text" id="nebim-username" name="nebim-username"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                    placeholder="Kullanıcı adınız">
                         </div>
@@ -351,7 +381,15 @@
                                 Şifre
                             </label>
                             <div class="relative">
-                                <input type="password" id="nebim-password" name="nebim-password"
+                                <input type="password"
+                                       autocomplete="new-password"
+                                       data-1p-ignore
+                                       data-lpignore="true"
+                                       data-bwignore="true"
+                                       data-protonpass-ignore="true"
+
+                                       data-key="Credentials:Nebim:Password"
+                                       id="nebim-password" name="nebim-password"
                                        class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                        placeholder="••••••••">
                                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('nebim-password')">
@@ -361,6 +399,14 @@
                         </div>
                     </div>
                 </div>
+          
+
+            <div class="pt-4 mt-4 border-t border-gray-200 ">
+                <button type="button" id="testNebimBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <i class="fas fa-vial mr-2"></i>
+                    Nebim Bağlantısını Test Et
+                </button>
+            </div>
             </div>
         </div>
 

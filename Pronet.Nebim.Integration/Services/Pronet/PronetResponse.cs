@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
+namespace Pronet.Nebim.Integration.Services.Pronet;
+
 // Ana Zarf
 public class PronetApiResponse
 {

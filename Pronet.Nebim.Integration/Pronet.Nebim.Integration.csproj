@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="9.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,12 +24,5 @@
       <_ContentIncludedByDefault Remove="wwwroot\js\settings.js" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Frontend\" />
-    </ItemGroup>
-
-    <Target Name="Tailwind" BeforeTargets="Build">
-        <Message Text="Compiling Tailwind CSS..." Importance="high" />
-        <Exec Command="npm run build:css" />
-    </Target>
+    
 </Project>

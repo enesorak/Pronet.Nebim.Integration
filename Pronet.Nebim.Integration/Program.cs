@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Pronet.Nebim.Integration;
 using Pronet.Nebim.Integration.Data;
@@ -6,6 +7,10 @@ using Pronet.Nebim.Integration.Services;
 using Pronet.Nebim.Integration.Services.Pronet;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// YENİ: Platform bağımsız şifreleme servisini ekliyoruz.
+builder.Services.AddDataProtection();
 
 // --- Servisleri Ekleme (Dependency Injection) ---
 // Veritabanı Context'i
@@ -41,19 +46,28 @@ app.MapGet("/api/settings", async (AppDbContext db) =>
     return Results.Ok(settings);
 });
 
-// POST: Gelen ayarları veritabanına kaydeder
-app.MapPost("/api/settings", async (AppDbContext db, Dictionary<string, string> newSettings) =>
+app.MapPost("/api/settings", async (AppDbContext db, Dictionary<string, string> newSettings, IDataProtectionProvider provider) =>
 {
+    var protector = provider.CreateProtector("Pronet.Nebim.Integration.Secrets");
+    
     foreach (var setting in newSettings)
     {
+        var valueToSave = setting.Value;
+
+        if (setting.Key.Contains("Password", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(valueToSave))
+        {
+            // YENİ: Şifreyi IDataProtector ile şifreliyoruz.
+            valueToSave = protector.Protect(valueToSave);
+        }
+
         var existingSetting = await db.Settings.FirstOrDefaultAsync(s => s.Key == setting.Key);
         if (existingSetting != null)
         {
-            existingSetting.Value = setting.Value; // Varsa güncelle
+            existingSetting.Value = valueToSave;
         }
         else
         {
-            db.Settings.Add(new Pronet.Nebim.Integration.Data.Models.Setting { Key = setting.Key, Value = setting.Value }); // Yoksa ekle
+            db.Settings.Add(new Setting { Key = setting.Key, Value = valueToSave });
         }
     }
     await db.SaveChangesAsync();
