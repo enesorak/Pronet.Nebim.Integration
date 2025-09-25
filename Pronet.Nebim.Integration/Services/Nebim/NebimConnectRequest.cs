@@ -9,12 +9,5 @@ public class NebimConnectRequest
     [JsonPropertyName("ModelType")]
     public int ModelType { get; set; } = 0;
 
-    [JsonPropertyName("UserName")]
-    public required string UserName { get; set; }
-
-    [JsonPropertyName("Password")]
-    public required string Password { get; set; }
-
-    [JsonPropertyName("ClientIP")]
-    public string ClientIP { get; set; } = "127.0.0.1";
+ 
 }
